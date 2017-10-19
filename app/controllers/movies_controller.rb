@@ -1,6 +1,5 @@
 class MoviesController < ApplicationController
-
-  def movie_params
+  def show
     params.require(:movie).permit(:title, :rating, :description, :release_date)
   end
 
@@ -11,14 +10,16 @@ class MoviesController < ApplicationController
   end
 
   def index
+    @movie = Movie.all
+    @all_ratings = Movie.uniq.pluck(:rating).sort
+    @ratings = @all_ratings
+    @ratings = params[:ratings].keys if params.keys.include? "ratings"
+    @movies = Movie.where(:rating => @ratings)
+    
     if params[:title] == "sort"
       @movies = Movie.all.order(:title => "ASC")
-      @title_header = 'hilite'
     elsif params[:release_date] == "sort"
       @movies = Movie.all.order(:release_date => "ASC")
-      @release_date_header = 'hilite'
-    else
-      @movies = Movie.all
     end
   end
 
@@ -48,5 +49,11 @@ class MoviesController < ApplicationController
     @movie.destroy
     flash[:notice] = "Movie '#{@movie.title}' deleted."
     redirect_to movies_path
+  end
+  
+  private
+  
+  def movie_params
+    params.require(:movie).permit(:title, :rating, :description, :release_date)
   end
 end
