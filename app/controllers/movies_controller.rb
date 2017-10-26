@@ -1,6 +1,6 @@
 class MoviesController < ApplicationController
   def show
-    params.require(:movie).permit(:title, :rating, :description, :release_date)
+    params.require(:movie).permit(:title, :rating, :description, :release_date, :commit)
   end
 
   def show
